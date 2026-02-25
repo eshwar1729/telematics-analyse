@@ -244,9 +244,11 @@ def check_special_anomalies(df):
 
     # 6. NIGHT DRIVING
     if 'NIGHT_DRIVING_DISTANCE' in df.columns and 'NIGHT_MOVING_MINS' in df.columns:
+        # Distance > 0 but Mins = 0
         anom1 = df[(df['NIGHT_DRIVING_DISTANCE'] > 0) & (df['NIGHT_MOVING_MINS'] == 0)]
         print(f"Night Dist > 0 but Mins = 0: {len(anom1)}")
 
+        # Distance = 0 but Mins > 0
         anom2 = df[(df['NIGHT_DRIVING_DISTANCE'] == 0) & (df['NIGHT_MOVING_MINS'] > 0)]
         print(f"Night Dist = 0 but Mins > 0: {len(anom2)}")
 
@@ -255,8 +257,17 @@ def check_special_anomalies(df):
         anom = df[(df['RPM_AT_MAX_SPEED'] == 0) & (df['MAX_SPEED'] > 0)]
         print(f"RPM_AT_MAX_SPEED=0 & MAX_SPEED>0 Anomaly: {len(anom)}")
 
-    # 8. EXCESSIVE DAILY DISTANCE (> 2000 km)
+    # 8. EXCESSIVE DAILY DISTANCE
     if 'DISTANCE_TRAVELED' in df.columns:
+        # Check for distance between 1000 and 1500
+        dist_1000_1500 = df[(df['DISTANCE_TRAVELED'] > 1000) & (df['DISTANCE_TRAVELED'] < 1500)]
+        print(f"Distance Traveled between 1000 and 1500 km: {len(dist_1000_1500)}")
+
+        # Check for distance > 1500
+        dist_gt_1500 = df[df['DISTANCE_TRAVELED'] > 1500]
+        print(f"Distance Traveled > 1500 km (Abnormal): {len(dist_gt_1500)}")
+
+        # Check for distance > 2000 (from previous logic)
         high_daily = df[df['DISTANCE_TRAVELED'] > 2000]
         print(f"Distance > 2000 km (Excessive for 1 day): {len(high_daily)}")
 
